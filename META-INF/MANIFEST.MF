@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: org.sidr.Main
+Class-Path: E:\Java Projects\SidrVoiceHelper\build\SidrVoiceHelper.jar
+

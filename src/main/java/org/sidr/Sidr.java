@@ -9,6 +9,7 @@ import ai.picovoice.porcupine.*;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -16,10 +17,12 @@ public class Sidr {
     private CommandManager commandManager;
     private PropertiesManager propertiesManager;
     private HomeAssistantManager homeAssistantManager;
-    public Sidr(String modelPath) throws IOException, LineUnavailableException {
-        Model model = new Model(modelPath);
-        System.out.println("Языковая модель загружена.");
+    public Sidr() throws IOException, LineUnavailableException {
         loadClasses();
+        Model model = new Model(getPropertiesManager().getVoskModelPath());
+        System.out.println("Языковая модель загружена.");
+
+
 
         VoiceRecognition voiceRecognition = new VoiceRecognition(this,model);
         Thread thread = new Thread(voiceRecognition);
@@ -27,7 +30,7 @@ public class Sidr {
         wakeWord();
 
     }
-    private void loadClasses(){
+    private void loadClasses() throws UnsupportedEncodingException {
         System.out.println("Загрузка классов...");
         this.commandManager = new CommandManager(this);
         this.propertiesManager = new PropertiesManager();
