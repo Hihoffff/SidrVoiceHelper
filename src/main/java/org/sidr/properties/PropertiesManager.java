@@ -15,7 +15,7 @@ public class PropertiesManager {
     private String wakeNamePicoVoice; //путь к модели распознования слова
     public PropertiesManager(){
         Properties properties = new Properties();
-        try (InputStream input = this.getClass().getClassLoader().getResourceAsStream("config.properties")) {
+        try (InputStream input = this.getClass().getClassLoader().getResourceAsStream("configs/config.properties")) {
             properties.load(input);
 
             ipHA = properties.getProperty("homeassistant.ip");
