@@ -2,6 +2,8 @@ package org.sidr;
 
 import ai.picovoice.picovoice.Picovoice;
 import org.sidr.homeassistant.HomeAssistantManager;
+import org.sidr.microphone.LoadMicrophone;
+import org.sidr.picovoice.PicovoiceManager;
 import org.sidr.properties.PropertiesManager;
 import org.sidr.threads.VoiceRecognition;
 import org.vosk.Model;
@@ -10,31 +12,45 @@ import ai.picovoice.porcupine.*;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+
 
 public class Sidr {
     private CommandManager commandManager;
     private PropertiesManager propertiesManager;
     private HomeAssistantManager homeAssistantManager;
-    public Sidr() throws IOException, LineUnavailableException {
+    LoadMicrophone loadMicrophone;
+    VoiceRecognition voiceRecognition;
+    private PicovoiceManager picovoiceManager;
+    public Sidr() throws IOException, LineUnavailableException, PorcupineException {
         loadClasses();
-        Model model = new Model(getPropertiesManager().getVoskModelPath());
+
         System.out.println("Языковая модель загружена.");
 
 
 
-        VoiceRecognition voiceRecognition = new VoiceRecognition(this,model);
+        //загрузка микрофона
+
+        System.out.println("Жду ключевое слово...");
+        getPicovoiceManager().start();
         Thread thread = new Thread(voiceRecognition);
-        //thread.start();
-        wakeWord();
+        thread.start();
+
+
+
+
+
 
     }
-    private void loadClasses() throws UnsupportedEncodingException {
+    private void loadClasses() throws IOException, PorcupineException {
         System.out.println("Загрузка классов...");
+        this.loadMicrophone = new LoadMicrophone();
         this.commandManager = new CommandManager(this);
         this.propertiesManager = new PropertiesManager();
         this.homeAssistantManager = new HomeAssistantManager(this);
+        this.picovoiceManager = new PicovoiceManager(this, getLoadMicrophone().getMyMicrophone());
+        getPicovoiceManager().load();
+        this.voiceRecognition = new VoiceRecognition(this, getLoadMicrophone().getMyMicrophone());
+        getVoiceRecognition().load();
         System.out.println("Загрузка классов прошла успешно!");
     }
     public CommandManager getCommandManager(){
@@ -50,70 +66,15 @@ public class Sidr {
         return homeAssistantManager;
     }
 
+    public LoadMicrophone getLoadMicrophone() {
+        return loadMicrophone;
+    }
 
-    public void wakeWord() throws LineUnavailableException {
+    public PicovoiceManager getPicovoiceManager() {
+        return picovoiceManager;
+    }
 
-        try {
-            // Инициализация Porcupine
-            Porcupine picovoice = new Porcupine.Builder()
-                    .setKeywordPath(getPropertiesManager().getWakeNamePicoVoicePath())
-                    .setModelPath(getPropertiesManager().getPorcupineNamePicoVoicePath())
-                    .setAccessKey(getPropertiesManager().getTokenPicoVoice())
-                    .build();
-
-
-            AudioFormat format = new AudioFormat(16000f, 16, 1, true, false); // Формат PCM 16-бит моно
-
-            // Открываем микрофон
-            DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-            if (!AudioSystem.isLineSupported(info)) {
-                System.err.println("Микрофон не поддерживает требуемый формат.");
-                return;
-            }
-            TargetDataLine microphone;
-            try {
-                microphone = (TargetDataLine) AudioSystem.getLine(info);
-                microphone.open(format);
-            } catch (LineUnavailableException e) {
-                System.err.println("Ошибка при захвате микрофона.");
-                return;
-            }
-
-
-            microphone.start();
-
-            System.out.println("Жду ключевое слово...");
-
-            int count=0;
-            short[] picoVoiceBuffer = new short[picovoice.getFrameLength()];
-            ByteBuffer captureBuffer = ByteBuffer.allocate(picovoice.getFrameLength() * 2);
-            captureBuffer.order(ByteOrder.LITTLE_ENDIAN);
-
-            int numBytesRead;
-            boolean isWakeUp= false;
-            while (!isWakeUp) {
-                numBytesRead = microphone.read(captureBuffer.array(), 0, captureBuffer.capacity());
-                if (numBytesRead != picovoice.getFrameLength() * 2) {
-                    continue;
-                }
-                captureBuffer.asShortBuffer().get(picoVoiceBuffer);
-                int detected = picovoice.process(picoVoiceBuffer);
-
-                if(detected==0){
-                    System.out.println("Ключевое слово распознано!"+count);
-                    count++;
-                }
-            }
-
-            // Освобождение ресурсов
-            microphone.stop();
-            microphone.close();
-            //picovoice.delete();
-
-        } catch (PorcupineException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public VoiceRecognition getVoiceRecognition() {
+        return voiceRecognition;
     }
 }
