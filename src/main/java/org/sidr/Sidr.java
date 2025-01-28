@@ -1,17 +1,17 @@
 package org.sidr;
 
-import ai.picovoice.picovoice.Picovoice;
+
 import org.sidr.homeassistant.HomeAssistantManager;
 import org.sidr.microphone.LoadMicrophone;
 import org.sidr.picovoice.PicovoiceManager;
 import org.sidr.properties.PropertiesManager;
 import org.sidr.threads.VoiceRecognition;
-import org.vosk.Model;
+
 import ai.picovoice.porcupine.*;
 
-import javax.sound.sampled.*;
+
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
 
 
 public class Sidr {
@@ -21,7 +21,7 @@ public class Sidr {
     LoadMicrophone loadMicrophone;
     VoiceRecognition voiceRecognition;
     private PicovoiceManager picovoiceManager;
-    public Sidr() throws IOException, LineUnavailableException, PorcupineException {
+    public Sidr() throws IOException, PorcupineException {
         loadClasses();
 
         System.out.println("Языковая модель загружена.");
