@@ -3,12 +3,13 @@ package org.sidr.picovoice;
 import ai.picovoice.porcupine.Porcupine;
 import ai.picovoice.porcupine.PorcupineException;
 import org.sidr.Sidr;
+import org.sidr.threads.ThreadsManager;
 
 import javax.sound.sampled.TargetDataLine;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class PicovoiceManager {
+public class PicovoiceManager implements Runnable {
     private final Sidr sidr;
     private Porcupine picovoice;
     TargetDataLine microphone;
@@ -34,30 +35,38 @@ public class PicovoiceManager {
             e.printStackTrace();
         }
     }
-    public void start(){
-        try{
-            int count=0;
+    @Override
+    public void run() {
+        int numBytesRead;
 
 
+        while(true){
+            while (!sidr.isWakeUp()) {
+                try{
+                    if(microphone==null){continue;}
+                    numBytesRead = microphone.read(captureBuffer.array(), 0, captureBuffer.capacity());
+                    if (numBytesRead != picovoice.getFrameLength() * 2) {
+                        continue;
+                    }
+                    captureBuffer.asShortBuffer().get(picoVoiceBuffer);
+                    int detected = picovoice.process(picoVoiceBuffer);
 
-            int numBytesRead;
-            boolean isWakeUp= false;
-            while (!isWakeUp) {
-                numBytesRead = microphone.read(captureBuffer.array(), 0, captureBuffer.capacity());
-                if (numBytesRead != picovoice.getFrameLength() * 2) {
-                    continue;
-                }
-                captureBuffer.asShortBuffer().get(picoVoiceBuffer);
-                int detected = picovoice.process(picoVoiceBuffer);
-
-                if(detected==0){
-                    System.out.println("Ключевое слово распознано!"+count);
-                    count++;
-                    break;
+                    if(detected==0){
+                        System.out.println("Ключевое слово распознано!");
+                        sidr.setWakeUp(true);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
         }
+
     }
+
 }

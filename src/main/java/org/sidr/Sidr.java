@@ -5,7 +5,8 @@ import org.sidr.homeassistant.HomeAssistantManager;
 import org.sidr.microphone.LoadMicrophone;
 import org.sidr.picovoice.PicovoiceManager;
 import org.sidr.properties.PropertiesManager;
-import org.sidr.threads.VoiceRecognition;
+import org.sidr.threads.ThreadsManager;
+import org.sidr.vosk.VoskManager;
 
 import ai.picovoice.porcupine.*;
 
@@ -19,27 +20,16 @@ public class Sidr {
     private PropertiesManager propertiesManager;
     private HomeAssistantManager homeAssistantManager;
     LoadMicrophone loadMicrophone;
-    VoiceRecognition voiceRecognition;
+    VoskManager voskManager;
     private PicovoiceManager picovoiceManager;
+    private ThreadsManager threadsManager;
+
+    private boolean WakeUp;
+
     public Sidr() throws IOException, PorcupineException {
         loadClasses();
-
-        System.out.println("Языковая модель загружена.");
-
-
-
-        //загрузка микрофона
-
-        System.out.println("Жду ключевое слово...");
-        getPicovoiceManager().start();
-        Thread thread = new Thread(voiceRecognition);
-        thread.start();
-
-
-
-
-
-
+        System.out.println("Запуск потоков...");
+        getThreadsManager().startVoiceThread();
     }
     private void loadClasses() throws IOException, PorcupineException {
         System.out.println("Загрузка классов...");
@@ -49,8 +39,10 @@ public class Sidr {
         this.homeAssistantManager = new HomeAssistantManager(this);
         this.picovoiceManager = new PicovoiceManager(this, getLoadMicrophone().getMyMicrophone());
         getPicovoiceManager().load();
-        this.voiceRecognition = new VoiceRecognition(this, getLoadMicrophone().getMyMicrophone());
-        getVoiceRecognition().load();
+        this.voskManager = new VoskManager(this, getLoadMicrophone().getMyMicrophone());
+        getVoskManager().load();
+        this.threadsManager = new ThreadsManager(this);
+
         System.out.println("Загрузка классов прошла успешно!");
     }
     public CommandManager getCommandManager(){
@@ -74,7 +66,18 @@ public class Sidr {
         return picovoiceManager;
     }
 
-    public VoiceRecognition getVoiceRecognition() {
-        return voiceRecognition;
+    public VoskManager getVoskManager() {
+        return voskManager;
+    }
+
+    public ThreadsManager getThreadsManager() {
+        return threadsManager;
+    }
+
+    public boolean isWakeUp() {
+        return WakeUp;
+    }
+    public void setWakeUp(boolean isWakeUp){
+        this.WakeUp = isWakeUp;
     }
 }
