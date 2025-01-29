@@ -8,11 +8,11 @@ public class LoadMicrophone {
         myMicrophone = startMicrophone();
     }
     public TargetDataLine startMicrophone(){
-        System.out.println("Запуск микрофона...");
+        System.out.println("Microphone loading...");
         AudioFormat format = new AudioFormat(16000f, 16, 1, true, false); // Формат PCM 16-бит моно
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
         if (!AudioSystem.isLineSupported(info)) {
-            System.err.println("Микрофон не поддерживает требуемый формат.");
+            System.err.println("The microphone does not support the required format!");
             return null;
         }
         TargetDataLine microphone;
@@ -20,11 +20,11 @@ public class LoadMicrophone {
             microphone = (TargetDataLine) AudioSystem.getLine(info);
             microphone.open(format);
         } catch (LineUnavailableException e) {
-            System.err.println("Ошибка при захвате микрофона.");
+            System.err.println("Microphone capture error.");
             return null;
         }
         microphone.start();
-        System.out.println("Микрофон запущен!");
+        System.out.println("Microphone was loaded!");
         return microphone;
     }
     public TargetDataLine getMyMicrophone(){

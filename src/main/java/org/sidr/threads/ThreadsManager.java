@@ -10,6 +10,7 @@ public class ThreadsManager {
         this.sidr = sidr;
     }
     public void startVoiceThread(){
+        System.out.println("Starting Voice threads...");
         PicovoiceThread = new Thread(sidr.getPicovoiceManager());
         VoskThread = new Thread(sidr.getVoskManager());
         PicovoiceThread.start();

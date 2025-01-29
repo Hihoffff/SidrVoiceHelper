@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public class VoskManager implements Runnable {
     private final Sidr sidr;
-    private boolean workFlag = true;
     private Recognizer recognizer;
     private final byte[] buffer = new byte[4096];
     private final TargetDataLine microphone;
@@ -19,20 +18,20 @@ public class VoskManager implements Runnable {
         this.sidr = sidr;
         this.microphone = microphone;
     }
-    public void setWorkFlag(boolean isWork){
-        this.workFlag = isWork;
-    }
 
     public void load() throws IOException {
+        System.out.println("Loading Vosk model...");
         Model model = new Model(sidr.getPropertiesManager().getVoskModelPath());
+        System.out.println("Vosk model was loaded!");
+        System.out.println("Loading recognizer Vosk...");
         recognizer = new Recognizer(model, 16000);
-        System.out.println("Языковая модель Vosk загружена!");
+        System.out.println("Recognizer Vosk was loaded!");
     }
     @Override
     public void run() {
-        System.out.println("Запуск потока под распознования голоса...");
+        System.out.println("Starting thread for vosk...");
         if(microphone == null){
-            System.out.println("Ошибка при загрузке микрофона!");
+            System.err.println("Error with microphone loading!");
             return;
         }
         int startIndex=0;
@@ -54,7 +53,6 @@ public class VoskManager implements Runnable {
                         }
                     }
                 } catch (IOException e) {
-                    workFlag = false;
                     throw new RuntimeException(e);
                 }
 

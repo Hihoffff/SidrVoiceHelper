@@ -28,11 +28,17 @@ public class Sidr {
 
     public Sidr() throws IOException, PorcupineException {
         loadClasses();
-        System.out.println("Запуск потоков...");
         getThreadsManager().startVoiceThread();
+        while (true) {
+            try {
+                Thread.sleep(10000); // Спим 10 секунду, чтобы не нагружать CPU
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
     private void loadClasses() throws IOException, PorcupineException {
-        System.out.println("Загрузка классов...");
+        System.out.println("Loading classes...");
         this.loadMicrophone = new LoadMicrophone();
         this.commandManager = new CommandManager(this);
         this.propertiesManager = new PropertiesManager();
@@ -43,7 +49,7 @@ public class Sidr {
         getVoskManager().load();
         this.threadsManager = new ThreadsManager(this);
 
-        System.out.println("Загрузка классов прошла успешно!");
+        System.out.println("Classes were loaded successfully!");
     }
     public CommandManager getCommandManager(){
         return this.commandManager;

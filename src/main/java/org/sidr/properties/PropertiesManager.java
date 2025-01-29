@@ -22,7 +22,7 @@ public class PropertiesManager {
         String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(path, "UTF-8");
         File file = new File(decodedPath);
-        this.jarPath = file.getParent() + "\\";
+        this.jarPath = file.getParent() + File.separator;
         System.out.println("Jar file path: "+ jarPath);
 
         Properties properties = new Properties();
@@ -34,9 +34,9 @@ public class PropertiesManager {
             portHA = properties.getProperty("homeassistant.port");
             tokenHA = properties.getProperty("homeassistant.token");
             tokenPicoVoice = properties.getProperty("picovoice.token");
-            porcupineNamePicoVoice = jarPath+properties.getProperty("picovoice.porcupine.name");
-            wakeNamePicoVoice = jarPath+properties.getProperty("picovoice.wakeName.name");
-            voskModelPath = jarPath+properties.getProperty("vosk.model.path");
+            porcupineNamePicoVoice = jarPath+properties.getProperty("picovoice.porcupine.name").replace("\\",File.separator);
+            wakeNamePicoVoice = jarPath+properties.getProperty("picovoice.wakeName.name").replace("\\",File.separator);
+            voskModelPath = jarPath+properties.getProperty("vosk.model.path").replace("\\",File.separator);
 
         } catch (IOException e) {
             e.printStackTrace();

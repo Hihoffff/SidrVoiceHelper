@@ -33,7 +33,7 @@ public class HomeAssistantManager {
                 // Выводим состояние устройства
                 return response.body().string();
             } else {
-                System.err.println("Ошибка: " + response.code());
+                System.err.println("Error: " + response.code());
                 return null;
             }
         }
@@ -57,7 +57,7 @@ public class HomeAssistantManager {
                 // Выводим состояние устройства
                 return true;
             } else {
-                System.err.println("Ошибка: " + response.code());
+                System.err.println("Error: " + response.code());
                 return false;
             }
         }
