@@ -20,9 +20,15 @@ public class VoskManager implements Runnable {
     }
 
     public void load() throws IOException {
-        System.out.println("Loading Vosk model...");
-        Model model = new Model(sidr.getPropertiesManager().getVoskModelPath());
-        System.out.println("Vosk model was loaded!");
+
+        Model model;
+        try {
+            System.out.println("Loading Vosk model...");
+            model = new Model(sidr.getPropertiesManager().getVoskModelPath());
+            System.out.println("Vosk model was loaded!");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         System.out.println("Loading recognizer Vosk...");
         recognizer = new Recognizer(model, 16000);
         System.out.println("Recognizer Vosk was loaded!");
