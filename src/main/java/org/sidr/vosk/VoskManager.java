@@ -11,6 +11,7 @@ public class VoskManager implements Runnable {
     private final Sidr sidr;
     private Recognizer recognizer;
     private final byte[] buffer = new byte[4096];
+
     private final TargetDataLine microphone;
 
 
@@ -33,6 +34,11 @@ public class VoskManager implements Runnable {
         recognizer = new Recognizer(model, 16000);
         System.out.println("Recognizer Vosk was loaded!");
     }
+
+    public Recognizer getRecognizer() {
+        return recognizer;
+    }
+
     @Override
     public void run() {
         System.out.println("Starting thread for vosk...");

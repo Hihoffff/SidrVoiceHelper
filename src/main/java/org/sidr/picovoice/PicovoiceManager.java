@@ -35,6 +35,19 @@ public class PicovoiceManager implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public Porcupine getPicovoice() {
+        return picovoice;
+    }
+
+    public ByteBuffer getCaptureBuffer() {
+        return captureBuffer;
+    }
+
+    public short[] getPicoVoiceBuffer() {
+        return picoVoiceBuffer;
+    }
+
     @Override
     public void run() {
         int numBytesRead;
