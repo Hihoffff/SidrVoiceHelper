@@ -26,15 +26,17 @@ public class VoiceRecThread implements Runnable{
     }
     @Override
     public void run() {
-        sidr.setWakeUp(false);
+        wakeUp = false;
         while (true){
-            if(microphone == null){
-                System.err.println("Error with microphone loading!");
+            if(!microphone.isOpen()){
+                System.err.println("Microphone is not opened!");
+                sidr.getLoadMicrophone().startMicrophone();
                 try {
                     Thread.sleep(5000); //делает перерыв дабы система успела захватить микрофон
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+
                 continue;
             }
             if(!wakeUp){ //запускает модель для распознования ключевого слова
@@ -50,13 +52,16 @@ public class VoiceRecThread implements Runnable{
                 }
             }
 
-            if(wakeUp && isSpeaking && ((System.nanoTime() - startTime)>10000)){ //если человек будет говорить дольше 10 секунд ,то останавливаем распознование
+            if(wakeUp && isSpeaking && ((System.nanoTime() - startTime)>10000000000L)){ //если человек будет говорить дольше 10 секунд ,то останавливаем распознование
                 wakeUp = false;
                 isSpeaking = false;
+                System.out.println("Stopped after 10 sec");
+
             }
 
-            if (wakeUp && !isSpeaking && ((System.nanoTime()-startTime)>5000)) { //если молчит больше 5 секунд ,то останаливаем распознование
+            if (wakeUp && !isSpeaking && ((System.nanoTime()-startTime)>5000000000L)) { //если молчит больше 5 секунд ,то останаливаем распознование
                 wakeUp=false;
+                System.out.println("Stopped after 5 sec");
             }
             try {
                 Thread.sleep(1); //ограничиваем бессконеный цикл
@@ -71,11 +76,9 @@ public class VoiceRecThread implements Runnable{
             int bytesRead = microphone.read(buffer, 0, buffer.length);
 
             if (sidr.getVoskManager().getRecognizer().acceptWaveForm(buffer, bytesRead)) {
-                text = sidr.getVoskManager().getRecognizer().getResult();
-                text = convertJsonToText(text);
+                text = convertJsonToText(sidr.getVoskManager().getRecognizer().getResult());
                 if(!text.isEmpty()){
                     sidr.getCommandManager().onText(text);
-                    sidr.setWakeUp(false);
                     isSpeaking = false;
                     return true;
                 }
@@ -84,7 +87,6 @@ public class VoiceRecThread implements Runnable{
                 String partResult = convertJsonToText(sidr.getVoskManager().getRecognizer().getPartialResult());
                 if(!partResult.isEmpty()){
                     if(!isSpeaking){isSpeaking=true;}
-                    System.out.println(partResult);
                 }
             }
         } catch (IOException e) {
@@ -104,7 +106,6 @@ public class VoiceRecThread implements Runnable{
 
             if(detected==0){
                 System.out.println("Ключевое слово распознано!");
-                sidr.setWakeUp(true);
                 return true;
             }
         } catch (Exception e) {
