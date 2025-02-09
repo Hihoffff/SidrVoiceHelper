@@ -1,4 +1,6 @@
-package org.sidr;
+package org.sidr.commands;
+
+import org.sidr.Sidr;
 
 import java.io.IOException;
 

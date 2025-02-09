@@ -1,6 +1,7 @@
 package org.sidr;
 
 
+import org.sidr.commands.CommandManager;
 import org.sidr.homeassistant.HomeAssistantManager;
 import org.sidr.microphone.LoadMicrophone;
 import org.sidr.picovoice.PicovoiceManager;

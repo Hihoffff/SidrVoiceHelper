@@ -18,6 +18,7 @@ public class PropertiesManager {
     private String porcupineNamePicoVoice; //путь модели пиковойса для распознования ключевого слова
     private String wakeNamePicoVoice; //путь к модели распознования слова
     private String voskModelPath;
+    private String commandsPathName;
     public PropertiesManager() throws UnsupportedEncodingException {
         String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(path, "UTF-8");
@@ -37,6 +38,7 @@ public class PropertiesManager {
             porcupineNamePicoVoice = jarPath+properties.getProperty("picovoice.porcupine.name").replace("\\",File.separator);
             wakeNamePicoVoice = jarPath+properties.getProperty("picovoice.wakeName.name").replace("\\",File.separator);
             voskModelPath = jarPath+properties.getProperty("vosk.model.path").replace("\\",File.separator);
+            commandsPathName = jarPath+properties.getProperty("commands.path.name").replace("\\",File.separator);
 
         } catch (IOException e) {
             e.printStackTrace();
