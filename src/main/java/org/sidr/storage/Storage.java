@@ -1,8 +1,6 @@
-package org.sidr;
-
+package org.sidr.storage;
 
 import org.yaml.snakeyaml.Yaml;
-
 
 import java.io.*;
 import java.nio.file.Files;
@@ -19,11 +17,10 @@ public class Storage {
         if(!filename.endsWith(".yml")) {
             filename += ".yml";
         }
-        this.FILENAME = (path+"\\"+filename).replace("\\", File.separator);;
+        this.FILENAME = (path+"\\"+filename).replace("\\", File.separator);
 
         Path pathToFile = Paths.get(FILENAME);
         Path parentDir = pathToFile.getParent();
-
 
         try {
             // Создаем директории, если их нет

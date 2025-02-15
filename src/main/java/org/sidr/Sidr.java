@@ -7,13 +7,14 @@ import org.sidr.microphone.LoadMicrophone;
 import org.sidr.picovoice.PicovoiceManager;
 import org.sidr.properties.PropertiesManager;
 import org.sidr.threads.ThreadsManager;
+import org.sidr.tools.SidrUtils;
 import org.sidr.vosk.VoskManager;
 
 import ai.picovoice.porcupine.*;
 
 
 import java.io.IOException;
-
+import java.util.Random;
 
 
 public class Sidr {
@@ -24,7 +25,7 @@ public class Sidr {
     VoskManager voskManager;
     private PicovoiceManager picovoiceManager;
     private ThreadsManager threadsManager;
-
+    private final Random random = new Random();
     private boolean WakeUp;
 
     public Sidr() throws IOException, PorcupineException {
@@ -49,7 +50,7 @@ public class Sidr {
         this.voskManager = new VoskManager(this, getLoadMicrophone().getMyMicrophone());
         getVoskManager().load();
         this.threadsManager = new ThreadsManager(this);
-
+        commandManager.loadCommands();
         System.out.println("Classes were loaded successfully!");
     }
     public CommandManager getCommandManager(){
@@ -86,5 +87,9 @@ public class Sidr {
     }
     public void setWakeUp(boolean isWakeUp){
         this.WakeUp = isWakeUp;
+    }
+
+    public Random getRandom() {
+        return random;
     }
 }

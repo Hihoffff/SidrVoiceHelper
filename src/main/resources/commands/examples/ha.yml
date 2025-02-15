@@ -1,0 +1,29 @@
+#----------------------- получаем инфу с устройства
+info:
+  type: ha
+  keywords:
+    - температура
+    - температура в комнате
+    - температура в помещении
+
+command:
+  mode: get #get\send
+  entityID: sensor.0xa4c138b8710c2145_temperature
+
+
+
+
+#--------------------------- запрашиваем изменение состояние устройства
+info:
+  type: ha
+  keywords:
+    - переключи
+    - тумблер
+    - тест умного дома
+    - тест дома
+
+command:
+  mode: send #get\send
+  entityID: input_boolean.test
+  requestID: input_boolean/toggle
+

@@ -1,0 +1,15 @@
+info:
+  type: say
+  keywords:
+    - привет
+    - здравствуйте
+    - здравствуй
+    - хай
+    - здарова
+
+command:
+  mode: write #write/say/audio
+  say:
+    - привет
+    - приветствую
+    - здравствуйте

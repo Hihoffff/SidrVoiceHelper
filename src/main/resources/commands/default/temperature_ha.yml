@@ -1,0 +1,10 @@
+info:
+  type: ha
+  keywords:
+    - температура
+    - температура в комнате
+    - температура в помещении
+
+command:
+  mode: get #get\send
+  entityID: sensor.0xa4c138b8710c2145_temperature

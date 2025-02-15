@@ -80,4 +80,8 @@ public class PropertiesManager {
     public String getVoskModelPath() {
         return voskModelPath;
     }
+
+    public String getCommandsPathName() {
+        return commandsPathName;
+    }
 }
