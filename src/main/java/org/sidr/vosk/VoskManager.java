@@ -60,7 +60,7 @@ public class VoskManager implements Runnable {
                         endIndex = text.lastIndexOf("\"");
                         text = text.substring(startIndex, endIndex);
                         if(!text.isEmpty()){
-                            sidr.getCommandManager().onText(text);
+                            sidr.getCommandManager().onCommand(text);
                             sidr.setWakeUp(false);
                         }
                     }

@@ -63,6 +63,11 @@ public class VoiceRecThread implements Runnable{
                 wakeUp=false;
                 System.out.println("Stopped after 5 sec");
             }
+
+            if(sidr.getCommandManager().getAnswer()!=null){
+                System.out.println(sidr.getCommandManager().getAnswer());
+                sidr.getCommandManager().setAnswer(null);
+            }
             try {
                 Thread.sleep(1); //ограничиваем бессконеный цикл
             } catch (InterruptedException e) {
@@ -78,7 +83,7 @@ public class VoiceRecThread implements Runnable{
             if (sidr.getVoskManager().getRecognizer().acceptWaveForm(buffer, bytesRead)) {
                 text = convertJsonToText(sidr.getVoskManager().getRecognizer().getResult());
                 if(!text.isEmpty()){
-                    sidr.getCommandManager().onText(text);
+                    sidr.getCommandManager().onCommand(text);
                     isSpeaking = false;
                     return true;
                 }

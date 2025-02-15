@@ -1,5 +1,6 @@
 package org.sidr.commands;
 
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jetbrains.annotations.Nullable;
 import org.sidr.Sidr;
 import org.sidr.commands.types.haCommand;
@@ -16,13 +17,14 @@ import java.util.Map;
 public class CommandManager {
     private final Sidr sidr;
     private String answer = null;
-    private List<Command> commands = new ArrayList<>();
+    private final List<Command> commands = new ArrayList<>();
+    LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
     public CommandManager(Sidr sidr){
         this.sidr = sidr;
     }
-    public void onText(String text) throws IOException {
+    public void onCommand(String text) throws IOException {
         System.out.println("текст:" + text);
-        if (text.equals("температура")){
+        /*if (text.equals("температура")){
             System.out.println(sidr.getHomeAssistantManager().getDeviceInfo("sensor.0xa4c138b8710c2145_temperature"));
         } else if (text.equals("переключи")) {
            sidr.getHomeAssistantManager().sendRequest("input_boolean.test","input_boolean/toggle");
@@ -30,6 +32,31 @@ public class CommandManager {
         else if(text.equals("ютуб")){
             System.out.println(sidr.getHomeAssistantManager().getDeviceInfo("sensor.marmok_latest_upload"));
         }
+        */
+
+        if(commands.isEmpty()){ System.err.println("There are not loaded commands!"); return;}
+        Command prefCommand=null;
+        int lowestDistance=-1;
+        for(Command command : commands){
+            for(String keyword : command.getKeyWords()){
+                int distance = levenshteinDistance.apply(text, keyword);
+                if(lowestDistance > distance || lowestDistance == -1){
+                    lowestDistance = distance;
+                    prefCommand = command;
+                }
+            }
+        }
+        if(prefCommand == null || lowestDistance == -1){return;}
+        System.out.println(lowestDistance);
+        if((text.length() <= 5 && lowestDistance <= 1)||(text.length() > 5 && text.length() <= 10 && lowestDistance <= 2)||(text.length() > 10 && lowestDistance <= 3)){
+            try{
+                prefCommand.getCommandHandler().launch();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
 
 
 
@@ -75,9 +102,8 @@ public class CommandManager {
                 }
 
                 if(commandHandler==null){System.err.println("ERROR with commandHandler type choosing! - " + fileName); continue;}
-                Command command = new Command(type,keyWords,commandHandler);
-
-                commands.add(command);
+                if(!commandHandler.isLoaded()){System.err.println("ERROR with commandHandler correct loading! - " + fileName); continue;}
+                commands.add(new Command(type,keyWords,commandHandler));
 
             }
         }

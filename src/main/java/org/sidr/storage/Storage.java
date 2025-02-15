@@ -60,4 +60,7 @@ public class Storage {
         return this.objects;
     }
 
+    public String getFILENAME() {
+        return FILENAME;
+    }
 }
