@@ -48,4 +48,13 @@ public class SidrUtils {
         JsonObject jsonObject = JsonParser.parseString(JSON).getAsJsonObject();
         return jsonObject.get(key).getAsString();
     }
+    @Nullable
+    public static String getStringFromJson(String JSON, List<String> key) { // переделать так чтобы тут подавать string и тут оно будет автоматом сплитаться на корни
+        JsonObject jsonObject = JsonParser.parseString(JSON).getAsJsonObject();
+        if(key.isEmpty()){return null;}
+        for(String curkey : key){
+            jsonObject = jsonObject.getAsJsonObject(curkey);
+        }
+        return jsonObject.getAsString();
+    }
 }

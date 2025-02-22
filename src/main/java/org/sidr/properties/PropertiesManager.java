@@ -10,15 +10,16 @@ import java.util.Properties;
 
 public class PropertiesManager {
     private final String jarPath;
-    private String ipHA;
-    private String localIpHA;
-    private String portHA;
-    private String tokenHA;
-    private String tokenPicoVoice; //токен для пиковойса https://console.picovoice.ai
-    private String porcupineNamePicoVoice; //путь модели пиковойса для распознования ключевого слова
-    private String wakeNamePicoVoice; //путь к модели распознования слова
-    private String voskModelPath;
-    private String commandsPathName;
+    private final String ipHA;
+    private final String localIpHA;
+    private final String portHA;
+    private final String tokenHA;
+    private final String tokenPicoVoice; //токен для пиковойса https://console.picovoice.ai
+    private final String porcupineNamePicoVoice; //путь модели пиковойса для распознования ключевого слова
+    private final String wakeNamePicoVoice; //путь к модели распознования слова
+    private final String voskModelPath;
+    private final String commandsPathName;
+    private final String jsonRootPlaceholder;
     public PropertiesManager() throws UnsupportedEncodingException {
         String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPath = URLDecoder.decode(path, "UTF-8");
@@ -39,9 +40,11 @@ public class PropertiesManager {
             wakeNamePicoVoice = jarPath+properties.getProperty("picovoice.wakeName.name").replace("\\",File.separator);
             voskModelPath = jarPath+properties.getProperty("vosk.model.path").replace("\\",File.separator);
             commandsPathName = jarPath+properties.getProperty("commands.path.name").replace("\\",File.separator);
+            jsonRootPlaceholder = properties.getProperty("json.root.placeholder");
+
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -83,5 +86,9 @@ public class PropertiesManager {
 
     public String getCommandsPathName() {
         return commandsPathName;
+    }
+
+    public String getJsonRootPlaceholder() {
+        return jsonRootPlaceholder;
     }
 }

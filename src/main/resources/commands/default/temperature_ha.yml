@@ -8,3 +8,6 @@ info:
 command:
   mode: get #get\send
   entityID: sensor.0xa4c138b8710c2145_temperature
+  get_keys: #при отсутствии выведет токо JSON ответ от устройства
+    - state
+    - attributes<|>unit_of_measurement # <|> нужен для обозначения перехода на ветвь дерева в JSON
