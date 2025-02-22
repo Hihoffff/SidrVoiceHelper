@@ -14,11 +14,7 @@ public class ThreadsManager {
     }
     public void startVoiceThread(){
         System.out.println("Starting Voice threads...");
-        //PicovoiceThread = new Thread(sidr.getPicovoiceManager());
-        //VoskThread = new Thread(sidr.getVoskManager());
         voiceRecThread = new Thread(voiceRecThreadManager);
-        //PicovoiceThread.start();
-        //VoskThread.start();
         voiceRecThread.start();
     }
 

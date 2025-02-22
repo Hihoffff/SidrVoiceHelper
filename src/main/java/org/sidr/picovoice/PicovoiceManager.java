@@ -9,7 +9,7 @@ import javax.sound.sampled.TargetDataLine;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class PicovoiceManager implements Runnable {
+public class PicovoiceManager {
     private final Sidr sidr;
     private Porcupine picovoice;
     TargetDataLine microphone;
@@ -46,40 +46,6 @@ public class PicovoiceManager implements Runnable {
 
     public short[] getPicoVoiceBuffer() {
         return picoVoiceBuffer;
-    }
-
-    @Override
-    public void run() {
-        int numBytesRead;
-
-
-        while(true){
-            while (!sidr.isWakeUp()) {
-                try{
-                    if(microphone==null){continue;}
-                    numBytesRead = microphone.read(captureBuffer.array(), 0, captureBuffer.capacity());
-                    if (numBytesRead != picovoice.getFrameLength() * 2) {
-                        continue;
-                    }
-                    captureBuffer.asShortBuffer().get(picoVoiceBuffer);
-                    int detected = picovoice.process(picoVoiceBuffer);
-
-                    if(detected==0){
-                        System.out.println("Ключевое слово распознано!");
-                        sidr.setWakeUp(true);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-
     }
 
 }

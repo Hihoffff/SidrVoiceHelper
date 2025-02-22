@@ -2,6 +2,7 @@ package org.sidr.threads;
 
 import org.sidr.Sidr;
 import org.sidr.picovoice.PicovoiceManager;
+import org.sidr.tools.SidrUtils;
 import org.sidr.vosk.VoskManager;
 
 
@@ -81,16 +82,16 @@ public class VoiceRecThread implements Runnable{
             int bytesRead = microphone.read(buffer, 0, buffer.length);
 
             if (sidr.getVoskManager().getRecognizer().acceptWaveForm(buffer, bytesRead)) {
-                text = convertJsonToText(sidr.getVoskManager().getRecognizer().getResult());
-                if(!text.isEmpty()){
+                text =  SidrUtils.getStringFromJson(sidr.getVoskManager().getRecognizer().getResult(),"text");
+                if(text!=null&& !text.isEmpty()){
                     sidr.getCommandManager().onCommand(text);
                     isSpeaking = false;
                     return true;
                 }
             }
             else{
-                String partResult = convertJsonToText(sidr.getVoskManager().getRecognizer().getPartialResult());
-                if(!partResult.isEmpty()){
+                String partResult = SidrUtils.getStringFromJson(sidr.getVoskManager().getRecognizer().getPartialResult(),"partial");
+                if(partResult!=null && !partResult.isEmpty()){
                     if(!isSpeaking){isSpeaking=true;}
                 }
             }
@@ -110,7 +111,7 @@ public class VoiceRecThread implements Runnable{
             int detected = picovoiceManager.getPicovoice().process(picovoiceManager.getPicoVoiceBuffer());
 
             if(detected==0){
-                System.out.println("Ключевое слово распознано!");
+                System.out.println("Key word was recognized!");
                 return true;
             }
         } catch (Exception e) {
@@ -119,6 +120,7 @@ public class VoiceRecThread implements Runnable{
         return false;
     }
     private String convertJsonToText(String text){
+        System.out.println(text);
         int startIndex=0;
         int endIndex=0;
         startIndex = text.indexOf(":") + 3;  // После символа ": и пробела
@@ -126,5 +128,6 @@ public class VoiceRecThread implements Runnable{
         text = text.substring(startIndex, endIndex);
         return text;
     }
+
 
 }

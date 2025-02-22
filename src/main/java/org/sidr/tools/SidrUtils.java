@@ -1,5 +1,14 @@
 package org.sidr.tools;
 
+
+
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.jetbrains.annotations.Nullable;
+
+
+
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -31,7 +40,12 @@ public class SidrUtils {
         } catch (IOException e) {
             System.out.println("Ошибка при чтении директории: " + e.getMessage());
         }
-
         return fileNames;
+    }
+
+    @Nullable
+    public static String getStringFromJson(String JSON, String key) {
+        JsonObject jsonObject = JsonParser.parseString(JSON).getAsJsonObject();
+        return jsonObject.get(key).getAsString();
     }
 }
