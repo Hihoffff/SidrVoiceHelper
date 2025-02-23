@@ -6,7 +6,7 @@ package org.sidr.tools;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.jetbrains.annotations.Nullable;
-
+import org.sidr.Sidr;
 
 
 import java.io.IOException;
@@ -49,10 +49,19 @@ public class SidrUtils {
         return jsonObject.get(key).getAsString();
     }
     @Nullable
-    public static String getStringFromJson(String JSON, List<String> key) { // переделать так чтобы тут подавать string и тут оно будет автоматом сплитаться на корни
+    public static String getStringFromJsonWithPH(Sidr sidr, String JSON, String key) {
         JsonObject jsonObject = JsonParser.parseString(JSON).getAsJsonObject();
-        if(key.isEmpty()){return null;}
-        for(String curkey : key){
+        String[] keys;
+        if(key.contains(sidr.getPropertiesManager().getJsonRootPlaceholder())){
+            keys = key.split(sidr.getPropertiesManager().getJsonRootPlaceholder());
+        }
+        else{
+            jsonObject = jsonObject.getAsJsonObject(key);
+            return jsonObject.getAsString();
+        }
+
+        if(keys.length == 0){return null;}
+        for(String curkey : keys){
             jsonObject = jsonObject.getAsJsonObject(curkey);
         }
         return jsonObject.getAsString();

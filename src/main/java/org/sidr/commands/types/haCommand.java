@@ -3,6 +3,7 @@ package org.sidr.commands.types;
 import org.sidr.Sidr;
 import org.sidr.commands.CommandHandler;
 import org.sidr.storage.Storage;
+import org.sidr.tools.SidrUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,17 +27,29 @@ public class haCommand implements CommandHandler {
     public void launch() throws IOException {
         if(mode.equals("get")){
             String ha_answer= sidr.getHomeAssistantManager().getDeviceInfo(entityID);
+            if(ha_answer==null){return;}
             if(json_keys.isEmpty()){
                 sidr.getCommandManager().setAnswer(ha_answer);
             }
             else{
-                String answer = "";
+                StringBuilder answer = new StringBuilder();
                 for(String key : json_keys){
                     if(key.contains(sidr.getPropertiesManager().getJsonRootPlaceholder())){
-
+                        String curAnsw = SidrUtils.getStringFromJsonWithPH(sidr,ha_answer,key);
+                        if(curAnsw!=null){
+                            answer.append(curAnsw);
+                        }
+                    }
+                    else{
+                        String curAnsw = SidrUtils.getStringFromJson(ha_answer,key);
+                        if(curAnsw!=null){
+                            answer.append(curAnsw);
+                        }
                     }
                 }
+                sidr.getCommandManager().setAnswer(answer.toString());
             }
+
 
         }
         else if(mode.equals("send")){

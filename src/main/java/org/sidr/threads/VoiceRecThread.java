@@ -29,7 +29,8 @@ public class VoiceRecThread implements Runnable{
     public void run() {
         wakeUp = false;
         while (true){
-            if(!microphone.isOpen()){
+
+            if(microphone==null||!microphone.isOpen()){
                 System.err.println("Microphone is not opened!");
                 sidr.getLoadMicrophone().startMicrophone();
                 try {
