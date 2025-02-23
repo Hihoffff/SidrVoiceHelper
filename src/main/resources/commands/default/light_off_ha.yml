@@ -1,0 +1,13 @@
+info:
+  type: ha
+  keywords:
+    - выключи свет
+    - выруби свет
+    - свет выруби
+    - свет выключи
+    - выключить свет
+
+command:
+  mode: send #get\send
+  entityID: input_boolean.light
+  requestID: input_boolean/turn_off

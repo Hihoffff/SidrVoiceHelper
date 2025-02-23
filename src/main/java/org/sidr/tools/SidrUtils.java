@@ -3,6 +3,7 @@ package org.sidr.tools;
 
 
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.jetbrains.annotations.Nullable;
@@ -50,20 +51,52 @@ public class SidrUtils {
     }
     @Nullable
     public static String getStringFromJsonWithPH(Sidr sidr, String JSON, String key) {
-        JsonObject jsonObject = JsonParser.parseString(JSON).getAsJsonObject();
-        String[] keys;
-        if(key.contains(sidr.getPropertiesManager().getJsonRootPlaceholder())){
-            keys = key.split(sidr.getPropertiesManager().getJsonRootPlaceholder());
-        }
-        else{
-            jsonObject = jsonObject.getAsJsonObject(key);
-            return jsonObject.getAsString();
-        }
+        try {
+            JsonElement jsonElement = JsonParser.parseString(JSON);
+            if (!jsonElement.isJsonObject()) {
+                return null; // The root element is not a JSON object
+            }
 
-        if(keys.length == 0){return null;}
-        for(String curkey : keys){
-            jsonObject = jsonObject.getAsJsonObject(curkey);
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            String[] keys;
+            if (key.contains(sidr.getPropertiesManager().getJsonRootPlaceholder())) {
+                keys = key.split(sidr.getPropertiesManager().getJsonRootPlaceholder());
+            } else {
+                // If no placeholder, treat the entire key as a single path
+                keys = new String[]{key};
+            }
+
+            if (keys.length == 0) {
+                return null;
+            }
+
+            // Traverse the JSON structure
+            for (int i = 0; i < keys.length - 1; i++) {
+                String curKey = keys[i];
+                if (!jsonObject.has(curKey)) {
+                    return null; // Key not found
+                }
+                JsonElement element = jsonObject.get(curKey);
+                if (!element.isJsonObject()) {
+                    return null; // Expected a JSON object but found a primitive
+                }
+                jsonObject = element.getAsJsonObject();
+            }
+
+            // Get the final value
+            String finalKey = keys[keys.length - 1];
+            if (!jsonObject.has(finalKey)) {
+                return null; // Final key not found
+            }
+            JsonElement finalElement = jsonObject.get(finalKey);
+            if (finalElement.isJsonPrimitive()) {
+                return finalElement.getAsString(); // Return the primitive value as a string
+            } else {
+                return null; // The final value is not a primitive
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // Handle any parsing errors
         }
-        return jsonObject.getAsString();
     }
 }

@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 public class haCommand implements CommandHandler {
-    private static String mode;
-    private static String requestID;
-    private static String entityID;
+    private  String mode;
+    private  String requestID;
+    private  String entityID;
     private static Sidr sidr;
-    private static boolean isLoadedCorrectly;
+    private  boolean isLoadedCorrectly;
     private List<String> json_keys = new ArrayList<>();
 
     public haCommand(Sidr sidr, Storage storage){

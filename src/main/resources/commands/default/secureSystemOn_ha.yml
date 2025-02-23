@@ -1,0 +1,13 @@
+info:
+  type: ha
+  keywords:
+    - включи охрану
+    - вруби охрану
+    - охрану вруби
+    - охрану включи
+    - включить охрану
+
+command:
+  mode: send #get\send
+  entityID: input_boolean.okhrana
+  requestID: input_boolean/turn_on

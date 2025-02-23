@@ -1,0 +1,13 @@
+info:
+  type: ha
+  keywords:
+    - выключи охрану
+    - выруби охрану
+    - охрану выруби
+    - охрану выключи
+    - выключить охрану
+
+command:
+  mode: send #get\send
+  entityID: input_boolean.okhrana
+  requestID: input_boolean/turn_off

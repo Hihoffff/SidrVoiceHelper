@@ -1,0 +1,13 @@
+info:
+  type: ha
+  keywords:
+    - включи свет
+    - вруби свет
+    - свет вруби
+    - свет включи
+    - включить свет
+
+command:
+  mode: send #get\send
+  entityID: input_boolean.light
+  requestID: input_boolean/turn_on

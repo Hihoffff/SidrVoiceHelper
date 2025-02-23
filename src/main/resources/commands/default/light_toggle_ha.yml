@@ -1,0 +1,11 @@
+info:
+  type: ha
+  keywords:
+    - свет
+    - освещение в комнате
+    - свет в комнате
+    - посвети
+command:
+  mode: send #get\send
+  entityID: input_boolean.light
+  requestID: input_boolean/toggle

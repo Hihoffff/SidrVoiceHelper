@@ -20,7 +20,7 @@ public class PicovoiceManager {
         this.sidr = sidr;
         this.microphone = microphone;
     }
-    public void load() throws PorcupineException {
+    public void load() {
         try{
             this.picovoice = new Porcupine.Builder()
                     .setKeywordPath(sidr.getPropertiesManager().getWakeNamePicoVoicePath())
@@ -32,7 +32,7 @@ public class PicovoiceManager {
             captureBuffer.order(ByteOrder.LITTLE_ENDIAN);
         } catch (PorcupineException e) {
             System.err.println("Ошибка при загрузке модели picovoice!");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
